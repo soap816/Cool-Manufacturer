@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Cool Manufacturer — fresh ice pops and cool packs in Trinidad & Tobago. Order online with cash or card." />
+  <meta name="theme-color" content="#06101d" />
+  <meta property="og:title" content="Cool Manufacturer | Fresh Ice Pops" />
+  <meta property="og:description" content="Fresh ice pops and cool packs in Trinidad & Tobago. Order online with cash or card, delivery or pickup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80" />
+  <title>Cool Manufacturer | Fresh Ice Pops</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="page">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Cool Manufacturer</div>
+        <h1>Fresh ice pops that feel legit, clean, and easy to order.</h1>
+        <p>Built for mobile customers, fast checkout, and trust. Cash or card. Delivery or pickup.</p>
+      </div>
+      <div class="topbar-actions">
+        <a href="#products" class="btn btn-secondary">Shop now</a>
+        <a href="#checkout" class="btn btn-primary">Order today</a>
+      </div>
+    </header>
+
+    <section class="hero-card">
+      <div class="hero-copy">
+        <span class="pill">Fresh daily • Trinidad & Tobago • Mobile friendly</span>
+        <h2>Professional online ordering for Cool Manufacturer.</h2>
+        <p>Show products clearly, accept cash or card, and send every order straight to your team through Discord or other webhooks.</p>
+        <div class="hero-badges">
+          <div class="mini-card"><strong>Trusted look</strong><span>Premium design that builds confidence</span></div>
+          <div class="mini-card"><strong>Fast ordering</strong><span>Simple cart and checkout</span></div>
+          <div class="mini-card"><strong>Notifications</strong><span>Webhook-ready order alerts</span></div>
+        </div>
+      </div>
+      <div class="hero-preview">
+        <div class="preview-panel">
+          <div class="preview-title">Today’s Best Sellers</div>
+          <div class="preview-item"><span>Milk Cool Pack</span><strong>TT$12</strong></div>
+          <div class="preview-item"><span>Plain Cool Pack</span><strong>TT$10</strong></div>
+          <div class="preview-item"><span>Long Cool Pack</span><strong>TT$40</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="products">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Products</span>
+          <h3>Simple product lineup</h3>
+        </div>
+        <input id="search" class="search" placeholder="Search products..." aria-label="Search products" />
+      </div>
+      <div class="filters" id="filters"></div>
+      <div class="product-grid" id="productGrid"></div>
+    </section>
+
+    <section class="section two-col" id="checkout">
+      <form class="checkout" id="orderForm">
+        <span class="eyebrow">Checkout</span>
+        <h3>Place your order</h3>
+        <div class="grid-2">
+          <label>Full name<input name="name" required placeholder="Your name" autocomplete="name" /></label>
+          <label>Phone<input name="phone" type="tel" required placeholder="868 xxx xxxx" autocomplete="tel" pattern="[0-9+\-\s\(\)]{7,15}" title="Enter a valid phone number" /></label>
+        </div>
+        <label>Address / pickup notes<textarea name="address" required placeholder="Enter address or pickup instructions" autocomplete="street-address"></textarea></label>
+        <div class="grid-2">
+          <label>Payment method
+            <select name="payment">
+              <option value="cash">Cash</option>
+              <option value="card">Card</option>
+            </select>
+          </label>
+          <label>Fulfillment
+            <select name="delivery">
+              <option value="pickup">Pickup</option>
+              <option value="delivery">Delivery</option>
+            </select>
+          </label>
+        </div>
+        <!-- Honeypot: hidden from real visitors, catches basic spam bots -->
+        <input type="text" name="company" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <button class="btn btn-primary full" type="submit" id="orderSubmitBtn">Send order</button>
+        <p class="note" id="formNote" role="status">Orders will be posted to your Netlify Function endpoint.</p>
+      </form>
+
+      <aside class="cart">
+        <div class="cart-head">
+          <span class="eyebrow">Cart</span>
+          <h3>Current order</h3>
+        </div>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="totals">
+          <div><span>Subtotal</span><strong id="subtotal">TT$0.00</strong></div>
+          <div><span>Delivery fee</span><strong id="deliveryFee">TT$0.00</strong></div>
+          <div class="grand"><span>Total</span><strong id="grandTotal">TT$0.00</strong></div>
+        </div>
+        <div class="trust-box">
+          <div><strong>Why customers trust this</strong></div>
+          <ul>
+            <li>Clear prices and clean layout</li>
+            <li>Visible contact and social buttons</li>
+            <li>Fast checkout with simple order review</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section info-grid">
+      <div class="info-card">
+        <h3>Delivery & pickup</h3>
+        <p>Let customers choose how they want to receive their order.</p>
+      </div>
+      <div class="info-card">
+        <h3>Discord notifications</h3>
+        <p>Every order can be forwarded to a Discord channel through a webhook.</p>
+      </div>
+      <div class="info-card">
+        <h3>WhatsApp / Messenger</h3>
+        <p>Use an approved API or automation bridge to send order alerts to messaging tools.</p>
+      </div>
+    </section>
+
+    <section class="section faq">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">FAQ</span>
+          <h3>Quick answers</h3>
+        </div>
+      </div>
+      <details><summary>How do customers order?</summary><p>They browse products, add items to cart, fill in their details, and submit the form.</p></details>
+      <details><summary>Can I use this on Netlify for free?</summary><p>Yes. You can host the site on Netlify’s free tier and add a custom domain later.</p></details>
+      <details><summary>Where do order messages go?</summary><p>They go to the Netlify Function endpoint, which can forward to Discord or other webhooks.</p></details>
+    </section>
+
+    <footer style="text-align:center;padding:20px 0 0">
+      <a href="admin.html" style="color:var(--muted);font-size:.82rem">Store admin</a>
+    </footer>
+  </div>
+
+  <div class="cart-float" id="cartFloat" aria-live="polite">
+    <a href="#checkout" class="cart-float-link">
+      <span id="cartFloatCount">0</span> items · <strong id="cartFloatTotal">TT$0.00</strong>
+    </a>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
