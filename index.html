@@ -90,7 +90,7 @@
         <!-- Honeypot: hidden from real visitors, catches basic spam bots -->
         <input type="text" name="company" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button class="btn btn-primary full" type="submit" id="orderSubmitBtn">Send order</button>
-        <p class="note" id="formNote" role="status">Orders will be posted to your Netlify Function endpoint.</p>
+        <p class="note" id="formNote" role="status">Orders go straight to your team.</p>
       </form>
 
       <aside class="cart">
@@ -138,8 +138,8 @@
         </div>
       </div>
       <details><summary>How do customers order?</summary><p>They browse products, add items to cart, fill in their details, and submit the form.</p></details>
-      <details><summary>Can I use this on Netlify for free?</summary><p>Yes. You can host the site on Netlify’s free tier and add a custom domain later.</p></details>
-      <details><summary>Where do order messages go?</summary><p>They go to the Netlify Function endpoint, which can forward to Discord or other webhooks.</p></details>
+      <details><summary>Can I use this on Cloudflare Pages for free?</summary><p>Yes. Cloudflare Pages has a generous free tier that covers hosting, functions, and storage for a site like this.</p></details>
+      <details><summary>Where do order messages go?</summary><p>They're sent to a Cloudflare Pages Function, which can forward them to Discord and WhatsApp.</p></details>
     </section>
 
     <footer style="text-align:center;padding:20px 0 0">

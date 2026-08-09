@@ -1,67 +1,103 @@
-# Cool Manufacturer Netlify Site
+# Cool Manufacturer — Cloudflare Pages Site
 
 ## Files
 - `index.html` — homepage and checkout UI
+- `admin.html` — password-protected page to edit prices, images, and delivery fee
 - `styles.css` — full design
 - `app.js` — product data, cart, and checkout logic
-- `netlify.toml` — Netlify build and redirect settings
-- `netlify/functions/order.js` — order webhook function
+- `admin.js` — admin login and settings form logic
+- `functions/api/order.js` — receives orders, sends them to Discord and/or WhatsApp
+- `functions/api/admin-login.js` — checks the admin password, issues a session token
+- `functions/api/products.js` — stores and returns prices, images, and delivery fee
 
-Your `netlify.toml` points to `netlify/functions` for the functions folder, so `order.js` needs to live at that exact path in your repo: `netlify/functions/order.js`, not at the root. That's fixed in this version.
+Everything under `functions/` is a Cloudflare Pages Function. A file at `functions/api/order.js` automatically becomes the endpoint `/api/order`, no extra routing config needed.
 
-## Netlify setup
-1. Create a GitHub repository and upload these files, keeping the folder structure above (`netlify/functions/order.js`).
-2. Go to Netlify and choose **Add new project** → **Import an existing project**.
-3. Connect your GitHub repo.
-4. Netlify should detect the settings from `netlify.toml`.
-5. Deploy the site first, then add your Discord webhook (see below).
+---
 
-## Adding your Discord webhook
-Do this in the Netlify dashboard, not in your code. A webhook URL is a secret — if it ends up in a public GitHub repo, anyone who finds it can post spam to your channel.
+## Part A: Setting up Cloudflare Pages
 
-1. In Netlify, open your site.
-2. Go to **Site configuration → Environment variables**.
-3. Click **Add a variable**.
-4. Key: `DISCORD_WEBHOOK_URL`
-5. Value: paste your webhook URL.
-6. Save, then trigger a new deploy (**Deploys → Trigger deploy → Deploy site**) so the function picks up the variable.
+### 1. Push this code to GitHub
+Delete the old `netlify` folder and `netlify.toml` from your repo if they're still there, they're not used anymore. Add these files in their place, keeping the folder structure exactly as it is (`functions/api/` matters, don't flatten it).
 
-Once that's set, every order submitted on the site posts straight to your Discord channel.
+### 2. Create the Cloudflare Pages project
+1. Go to [dash.cloudflare.com](https://dash.cloudflare.com) and log in or sign up (free).
+2. In the left sidebar, go to **Workers & Pages**.
+3. Click **Create** → **Pages** → **Connect to Git**.
+4. Authorize Cloudflare to access GitHub, then pick your repository.
+5. On the build settings screen:
+   - **Framework preset:** None
+   - **Build command:** leave blank
+   - **Build output directory:** `/`
+6. Click **Save and Deploy**.
 
-## What the function does
-The order form sends JSON to `/.netlify/functions/order`. The function validates the required fields, builds a formatted message, and posts it to your Discord webhook if `DISCORD_WEBHOOK_URL` is set. It also checks a hidden honeypot field and quietly ignores anything that fills it in, since that's almost always a bot.
+Cloudflare builds and deploys the site. You'll get a URL like `cool-manufacturer.pages.dev`. The `/api/*` functions deploy automatically along with it, no separate step.
 
-## What changed in this update
-- **Fixed function path.** `order.js` now sits at `netlify/functions/order.js`, matching `netlify.toml`. Previously it wouldn't have been picked up as a function at all.
-- **Cart persistence.** The cart now saves to the browser's local storage, so it survives a page refresh or an accidental tab close.
-- **Spam protection.** A hidden honeypot field on the order form is checked both client-side and server-side.
-- **Better submit feedback.** The send button disables and shows "Sending order..." while the request is in flight, so people can't double-submit.
-- **Floating cart summary.** Once someone adds a product, a small pill appears showing item count and total, linking straight to checkout.
-- **Empty search state.** Searching for something that doesn't exist now shows a message instead of a blank grid.
-- **Open Graph tags.** Links to your site shared on WhatsApp, Facebook, or elsewhere now show a title, description, and image preview instead of a bare link.
-- **Minor accessibility fixes.** Labeled the search input, added `aria-label`s to the cart +/− buttons, and added visible focus outlines for keyboard users.
+### 3. Create the KV namespace (for prices, images, delivery fee)
+1. In the Cloudflare dashboard, go to **Storage & Databases → KV**.
+2. Click **Create a namespace**.
+3. Name it something like `cool-manufacturer-settings`. Create it.
 
-## Admin panel: edit prices, images, and delivery fee
-There's a password-protected page at `/admin.html` where you can update each product's price and image, plus your delivery fee, without touching any code. Changes apply to the live site for every visitor right away.
+### 4. Bind the KV namespace to your Pages project
+1. Go back to **Workers & Pages**, open your project.
+2. Go to **Settings → Bindings**.
+3. Click **Add binding** → **KV namespace**.
+4. **Variable name:** `SITE_SETTINGS` (must match exactly, that's what the code looks for).
+5. **KV namespace:** select the one you just created.
+6. Save.
 
-### Setup
-1. In Netlify, go to **Site configuration → Environment variables**.
-2. Add a variable: key `ADMIN_PASSWORD`, value a password only you know. Pick something you wouldn't reuse elsewhere.
-3. Deploy (or redeploy) the site.
-4. Go to `yoursite.netlify.app/admin.html`, log in, and edit away.
+### 5. Add your environment variables
+Still in **Settings**, go to **Environment variables**. Add each of these (as **Secret**, not plain text, since they're sensitive):
 
-### How it works
-Product data (price and image) and the delivery fee are stored using Netlify Blobs, which is built into your Netlify project and needs no extra database setup. The `package.json` in this project lists it as a dependency, and Netlify installs it automatically at deploy time. `app.js` fetches these values on every page load, so if nothing has been saved yet, the site just uses the defaults already baked into the code.
+| Variable | Value |
+|---|---|
+| `ADMIN_PASSWORD` | A strong password only you know |
+| `DISCORD_WEBHOOK_URL` | Your Discord webhook URL |
+| `WHATSAPP_TOKEN` | See Part B below |
+| `WHATSAPP_PHONE_NUMBER_ID` | See Part B below |
+| `WHATSAPP_RECIPIENT_NUMBER` | See Part B below |
 
-Logging in gives you a temporary session (2 hours) rather than storing your password in the browser. Only the price and image for each of the three products can be changed this way, along with the delivery fee. Names, descriptions, and bullet points still live in `app.js` and need a code change to update.
+You don't need all of them. Discord works with just `DISCORD_WEBHOOK_URL` set. WhatsApp needs all three of its variables set together, or it's skipped.
 
-### A note on security
-This is intentionally simple, sized for a small site where the worst case of someone getting in is a wrong price or picture, not stolen customer data or payments. It's password-only, with no rate limiting on login attempts, so use a genuinely strong, unique password. Don't reuse this pattern for anything that touches customer data or payment details.
+### 6. Redeploy
+Bindings and environment variables only apply to deployments made after you add them. Go to **Deployments**, click the three dots on the latest one, and **Retry deployment** (or just push a small commit to trigger a fresh one).
 
-## Publish options
-You can also use Netlify's drag-and-drop deploy for simple static sites, or deploy from a repository for continuous deployment.
+### 7. Test it
+- Visit your site, place a test order, check Discord (and WhatsApp, if set up) for the alert.
+- Visit `yoursite.pages.dev/admin.html`, log in, change a price, save, then reload the homepage and confirm it changed.
 
-## Notes
-- Discord webhook support is ready — just add the environment variable above.
-- WhatsApp and Messenger usually require an approved API or an automation bridge.
-- The delivery fee is set to `TT$0` in `app.js` (the `DELIVERY_FEE` constant near the top). Change that number if you want to charge for delivery.
+---
+
+## Part B: Setting up WhatsApp notifications
+
+Being upfront: this is more involved than Discord. Discord is one URL. WhatsApp requires a Meta developer account and a few setup steps, and it has one real limitation you should know about before relying on it.
+
+### The 24-hour window limitation
+WhatsApp's API only lets a business send a free-form text message to someone if that person has messaged the business's WhatsApp number within the last 24 hours. Since these are notifications sent *to* you, that means **you need to send any message to your own WhatsApp Business number at least once a day** for text-message alerts to keep working. If that window closes, the API rejects the message (you'll see `whatsappSent: false` show up in the response, though the order still saves fine either way).
+
+The permanent fix is a Meta-approved **message template**, which can be sent anytime regardless of the window, but templates need to be submitted for review and approved first (usually within a day, sometimes longer). For now, this setup uses a regular text message, which is faster to get working, with this caveat attached. If you want, I can help you set up a template later once you've got the basics running.
+
+### Setup steps
+1. Go to [developers.facebook.com](https://developers.facebook.com) and log in with a Facebook account (create a Meta Business account if you don't have one).
+2. Click **My Apps → Create App**. Choose **Business** as the app type.
+3. Once the app is created, add the **WhatsApp** product to it from the app dashboard.
+4. Under **WhatsApp → API Setup**, you'll see:
+   - A **temporary access token** (valid 24 hours, fine for testing, you'll need a permanent one later).
+   - A **test phone number** with its **Phone number ID** listed underneath.
+5. In the same screen, under "To", add your own personal WhatsApp number as a recipient. Meta will text you a verification code, enter it to confirm. Test-mode apps can only message pre-verified numbers like this one.
+6. Copy the **Phone number ID** into `WHATSAPP_PHONE_NUMBER_ID`.
+7. Copy the **temporary access token** into `WHATSAPP_TOKEN` for now.
+8. Set `WHATSAPP_RECIPIENT_NUMBER` to your verified number, in full international format with no `+` and no leading zero, e.g. a Trinidad number `868 123 4567` becomes `18681234567`.
+
+### Going from test to permanent
+The temporary token expires in 24 hours. For something you don't have to keep re-generating:
+1. In your Meta app, go to **Business Settings → Users → System Users**, create a system user.
+2. Assign it the WhatsApp app with `whatsapp_business_messaging` permission.
+3. Generate a token for that system user with no expiry.
+4. Replace `WHATSAPP_TOKEN` with that value.
+
+You'll also eventually want to register your own business's real phone number instead of Meta's shared test number, which requires business verification through Meta. That's a longer process and only worth doing once you've confirmed the basic flow works for you.
+
+---
+
+## Security note
+The admin login is a password check with a temporary signed session, sized for a small site where the worst case is someone changing a price on you. It's not built for anything handling customer payments or personal data. Use a real, unique password.

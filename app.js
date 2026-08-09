@@ -239,7 +239,7 @@ els.form.addEventListener('submit', async (e) => {
   els.formNote.textContent = '';
 
   try {
-    const res = await fetch('/.netlify/functions/order', {
+    const res = await fetch('/api/order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(order),
@@ -248,7 +248,7 @@ els.form.addEventListener('submit', async (e) => {
 
     const result = await res.json().catch(() => ({}));
     if (!result.notified) {
-      console.warn('Order saved, but DISCORD_WEBHOOK_URL is not set in Netlify yet, so no alert was sent.');
+      console.warn('Order saved, but no notification channel is set up yet (Discord or WhatsApp).');
     }
 
     state.cart = [];
@@ -265,7 +265,7 @@ els.form.addEventListener('submit', async (e) => {
 
 async function applyStoredSettings() {
   try {
-    const res = await fetch('/.netlify/functions/products');
+    const res = await fetch('/api/products');
     if (!res.ok) return;
     const data = await res.json();
 

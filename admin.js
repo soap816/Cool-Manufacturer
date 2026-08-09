@@ -28,7 +28,7 @@ function showLoginPanel() {
 }
 
 async function loadSettings() {
-  const res = await fetch('/.netlify/functions/products');
+  const res = await fetch('/api/products');
   if (!res.ok) throw new Error('Could not load current settings');
   return res.json();
 }
@@ -69,7 +69,7 @@ els.loginForm.addEventListener('submit', async (e) => {
 
   const formData = new FormData(els.loginForm);
   try {
-    const res = await fetch('/.netlify/functions/admin-login', {
+    const res = await fetch('/api/admin-login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: formData.get('password') }),
@@ -124,7 +124,7 @@ els.settingsForm.addEventListener('submit', async (e) => {
   els.saveNote.textContent = '';
 
   try {
-    const res = await fetch('/.netlify/functions/products', {
+    const res = await fetch('/api/products', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
