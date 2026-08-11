@@ -39,7 +39,6 @@ function fillForm(data) {
     const product = data.products && data.products[id];
     if (!section || !product) return;
     section.querySelector('input[name="price"]').value = product.price;
-    section.querySelector('input[name="image"]').value = product.image;
   });
   els.deliveryFeeInput.value = data.deliveryFee ?? 0;
 }
@@ -109,7 +108,6 @@ els.settingsForm.addEventListener('submit', async (e) => {
     const section = els.settingsForm.querySelector(`[data-product="${id}"]`);
     products[id] = {
       price: Number(section.querySelector('input[name="price"]').value),
-      image: section.querySelector('input[name="image"]').value.trim(),
     };
   });
 
