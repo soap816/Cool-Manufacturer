@@ -4,26 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Cool Manufacturer — fresh ice pops and cool packs in Trinidad & Tobago. Order online with cash or card." />
-  <meta name="theme-color" content="#06101d" />
+  <meta name="theme-color" content="#FFF7EA" />
   <meta property="og:title" content="Cool Manufacturer | Fresh Ice Pops" />
   <meta property="og:description" content="Fresh ice pops and cool packs in Trinidad & Tobago. Order online with cash or card, delivery or pickup." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80" />
   <title>Cool Manufacturer | Fresh Ice Pops</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
   <div class="page">
     <header class="topbar">
       <div>
-        <div class="eyebrow">Cool Manufacturer</div>
-        <h1>Fresh ice pops that feel legit, clean, and easy to order.</h1>
-        <p>Built for mobile customers, fast checkout, and trust. Cash or card. Delivery or pickup.</p>
+        <span class="eyebrow">Cool Manufacturer</span>
+        <h1>Ice pops that make everyone say <span style="color:var(--pink)">ooooh, cool!</span></h1>
+        <p>Bright flavours, easy ordering, and a smile in every pack. Cash or card. Delivery or pickup.</p>
       </div>
       <div class="topbar-actions">
         <a href="#products" class="btn btn-secondary">Shop now</a>
@@ -32,30 +29,29 @@
     </header>
 
     <section class="hero-card">
+      <div class="confetti" style="width:14px;height:14px;background:var(--yellow);top:24px;left:8%"></div>
+      <div class="confetti" style="width:10px;height:10px;background:var(--blue);top:80px;left:18%"></div>
+      <div class="confetti" style="width:16px;height:16px;background:var(--purple);top:40px;right:12%"></div>
+      <div class="confetti" style="width:12px;height:12px;background:var(--pink);top:110px;right:22%"></div>
       <div class="hero-copy">
-        <span class="pill">Fresh daily • Trinidad & Tobago • Mobile friendly</span>
-        <h2>Professional online ordering for Cool Manufacturer.</h2>
-        <p>Show products clearly, accept cash or card, and send every order straight to your team through Discord or other webhooks.</p>
+        <span class="pill">Fresh daily &middot; Trinidad and Tobago</span>
+        <h2>Three ways to <span class="accent">cool down</span>.</h2>
+        <p>Show your products clearly, take cash or card, and get every order sent straight to your phone through Discord or WhatsApp.</p>
         <div class="hero-badges">
-          <div class="mini-card"><strong>Trusted look</strong><span>Premium design that builds confidence</span></div>
+          <div class="mini-card"><strong>Trusted look</strong><span>A site that feels made for you</span></div>
           <div class="mini-card"><strong>Fast ordering</strong><span>Simple cart and checkout</span></div>
-          <div class="mini-card"><strong>Notifications</strong><span>Webhook-ready order alerts</span></div>
+          <div class="mini-card"><strong>Instant alerts</strong><span>Every order lands in your chat</span></div>
         </div>
       </div>
-      <div class="hero-preview">
-        <div class="preview-panel">
-          <div class="preview-title">Today’s Best Sellers</div>
-          <div class="preview-item"><span>Milk Cool Pack</span><strong>TT$12</strong></div>
-          <div class="preview-item"><span>Plain Cool Pack</span><strong>TT$10</strong></div>
-          <div class="preview-item"><span>Long Cool Pack</span><strong>TT$40</strong></div>
-        </div>
-      </div>
+      <svg class="wave" viewBox="0 0 1200 60" preserveAspectRatio="none" height="46">
+        <path d="M0,30 Q50,60 100,30 T200,30 T300,30 T400,30 T500,30 T600,30 T700,30 T800,30 T900,30 T1000,30 T1100,30 T1200,30 L1200,60 L0,60 Z" fill="#FFF7EA"/>
+      </svg>
     </section>
 
     <section class="section" id="products">
       <div class="section-head">
         <div>
-          <span class="eyebrow">Products</span>
+          <span class="eyebrow" style="background:var(--blue);color:var(--white)">Pick your pack</span>
           <h3>Simple product lineup</h3>
         </div>
         <input id="search" class="search" placeholder="Search products..." aria-label="Search products" />
@@ -67,7 +63,7 @@
     <section class="section two-col" id="checkout">
       <form class="checkout" id="orderForm">
         <span class="eyebrow">Checkout</span>
-        <h3>Place your order</h3>
+        <h3 style="margin-top:10px">Place your order</h3>
         <div class="grid-2">
           <label>Full name<input name="name" required placeholder="Your name" autocomplete="name" /></label>
           <label>Phone<input name="phone" type="tel" required placeholder="868 xxx xxxx" autocomplete="tel" pattern="[0-9+\-\s\(\)]{7,15}" title="Enter a valid phone number" /></label>
@@ -87,17 +83,14 @@
             </select>
           </label>
         </div>
-        <!-- Honeypot: hidden from real visitors, catches basic spam bots -->
         <input type="text" name="company" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button class="btn btn-primary full" type="submit" id="orderSubmitBtn">Send order</button>
         <p class="note" id="formNote" role="status">Orders go straight to your team.</p>
       </form>
 
       <aside class="cart">
-        <div class="cart-head">
-          <span class="eyebrow">Cart</span>
-          <h3>Current order</h3>
-        </div>
+        <span class="eyebrow" style="background:var(--purple);color:var(--white)">Cart</span>
+        <h3 style="margin-top:10px">Current order</h3>
         <div id="cartItems" class="cart-items"></div>
         <div class="totals">
           <div><span>Subtotal</span><strong id="subtotal">TT$0.00</strong></div>
@@ -107,7 +100,7 @@
         <div class="trust-box">
           <div><strong>Why customers trust this</strong></div>
           <ul>
-            <li>Clear prices and clean layout</li>
+            <li>Clear prices and a fun, friendly look</li>
             <li>Visible contact and social buttons</li>
             <li>Fast checkout with simple order review</li>
           </ul>
@@ -125,8 +118,8 @@
         <p>Every order can be forwarded to a Discord channel through a webhook.</p>
       </div>
       <div class="info-card">
-        <h3>WhatsApp / Messenger</h3>
-        <p>Use an approved API or automation bridge to send order alerts to messaging tools.</p>
+        <h3>WhatsApp alerts</h3>
+        <p>Orders can also reach you directly on WhatsApp once it's set up.</p>
       </div>
     </section>
 

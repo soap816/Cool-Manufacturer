@@ -6,8 +6,12 @@ const products = [
     category: 'Milk Cools',
     tag: '15 pack',
     description: '5 Coconut, 5 Strawberry, 5 Pineapple.',
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80',
     bullets: ['15 milk cools', 'Mixed flavours', 'Great for families'],
+    art: { flavors: [
+      { color: '#FFF6EA', dot: '#C9A15A' },
+      { color: '#FFB3C6', dot: '#E8637F' },
+      { color: '#FFC98F', dot: '#E8934A' },
+    ], tubeW: 28, gap: 10, tubeH: 118, bg: '#FFE9D6' },
   },
   {
     id: 'plain-cool-pack',
@@ -15,9 +19,15 @@ const products = [
     price: 10,
     category: 'Plain Cools',
     tag: '15 pack',
-    description: '3 Lime, 3 Red Champagne, 3 Orange, 3 Blueberry, 3 Cream Soda.',
-    image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80',
+    description: 'Lime, Red Champagne, Orange, Blueberry, Cream Soda.',
     bullets: ['15 plain cools', 'Balanced mix', 'Popular everyday pack'],
+    art: { flavors: [
+      { color: '#A8D93B', dot: '#6E9A1F' },
+      { color: '#E4536B', dot: '#A9314A' },
+      { color: '#FFA53D', dot: '#C97418' },
+      { color: '#6C63D6', dot: '#453CA8' },
+      { color: '#E8C9A0', dot: '#B08A54' },
+    ], tubeW: 18, gap: 7, tubeH: 112, bg: '#E4F7F0' },
   },
   {
     id: 'long-cool-pack',
@@ -25,9 +35,15 @@ const products = [
     price: 40,
     category: 'Long Cools',
     tag: '50 pack',
-    description: 'Mix of Lime, Red Champagne, Orange, Blueberry, Pineapple, and Cream Soda.',
-    image: 'https://images.unsplash.com/photo-1497534446932-c925b458314e?auto=format&fit=crop&w=1200&q=80',
+    description: 'Lime, Red Champagne, Orange, Blueberry, Cream Soda.',
     bullets: ['50 long cools', 'Custom mix', 'Best for events'],
+    art: { flavors: [
+      { color: '#A8D93B', dot: '#6E9A1F' },
+      { color: '#E4536B', dot: '#A9314A' },
+      { color: '#FFA53D', dot: '#C97418' },
+      { color: '#6C63D6', dot: '#453CA8' },
+      { color: '#E8C9A0', dot: '#B08A54' },
+    ], tubeW: 14, gap: 8, tubeH: 148, bg: '#F1EAFE' },
   },
 ];
 
@@ -77,6 +93,32 @@ const els = {
 
 const currency = (n) => `TT$${Number(n).toFixed(2)}`;
 
+function tubesSvg(art) {
+  const { flavors, tubeW, gap, tubeH } = art;
+  const count = flavors.length;
+  const totalW = count * tubeW + (count - 1) * gap;
+  const svgW = totalW + 20;
+  const svgH = tubeH + 24;
+  const startX = 10;
+  const topY = 12;
+
+  const parts = [];
+  flavors.forEach((flavor, i) => {
+    const x = startX + i * (tubeW + gap);
+    const cx = x + tubeW / 2;
+    const rx = tubeW / 2;
+
+    parts.push(`<ellipse cx="${cx}" cy="${topY - 2}" rx="${rx * 0.5}" ry="4" fill="${flavor.color}"/>`);
+    parts.push(`<rect x="${x}" y="${topY}" width="${tubeW}" height="${tubeH}" rx="${rx}" fill="${flavor.color}"/>`);
+    parts.push(`<ellipse cx="${cx}" cy="${topY + tubeH + 2}" rx="${rx * 0.45}" ry="3.5" fill="${flavor.color}"/>`);
+    parts.push(`<rect x="${x + rx * 0.35}" y="${topY + 3}" width="${rx * 0.5}" height="${tubeH * 0.5}" rx="${rx * 0.25}" fill="#ffffff" opacity="0.25"/>`);
+    parts.push(`<rect x="${x + 2}" y="${topY + tubeH * 0.24}" width="${tubeW - 4}" height="${tubeH * 0.15}" rx="3" fill="#ffffff" opacity="0.92"/>`);
+    parts.push(`<circle cx="${cx}" cy="${topY + tubeH * 0.24 + (tubeH * 0.15) / 2}" r="${Math.max(2, rx * 0.22)}" fill="${flavor.dot}"/>`);
+  });
+
+  return `<svg width="100%" height="100%" viewBox="0 0 ${svgW} ${svgH}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Illustration of ${count} ice pop flavours">${parts.join('')}</svg>`;
+}
+
 function categories() {
   return ['All', ...new Set(products.map((p) => p.category))];
 }
@@ -93,7 +135,7 @@ function filteredProducts() {
 function addToCart(product) {
   const existing = state.cart.find((item) => item.id === product.id);
   if (existing) existing.qty += 1;
-  else state.cart.push({ ...product, qty: 1 });
+  else state.cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
   renderCart();
 }
 
@@ -128,8 +170,9 @@ function renderProducts() {
 
   els.grid.innerHTML = items.map((p) => `
     <article class="product-card">
-      <div class="product-image" style="background-image:url('${p.image}')">
+      <div class="product-image" style="background:${p.art.bg}">
         <span class="badge">${p.tag}</span>
+        ${tubesSvg(p.art)}
       </div>
       <div class="product-content">
         <h4>${p.name}</h4>
@@ -207,7 +250,6 @@ els.form.addEventListener('submit', async (e) => {
 
   const formData = new FormData(els.form);
 
-  // Honeypot: real visitors never fill this hidden field, bots often do.
   if (formData.get('company')) {
     els.form.reset();
     state.cart = [];
@@ -274,7 +316,6 @@ async function applyStoredSettings() {
         const override = data.products[p.id];
         if (!override) return;
         if (Number.isFinite(override.price)) p.price = override.price;
-        if (typeof override.image === 'string' && override.image) p.image = override.image;
       });
     }
 

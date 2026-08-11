@@ -1,14 +1,16 @@
 # Cool Manufacturer — Cloudflare Pages Site
 
+**Design note:** the site now uses a playful, colorful theme (Fredoka + Nunito fonts, hand-drawn-style ice pop illustrations) instead of the original dark theme. The admin panel no longer has an "Image URL" field, since the illustrations are generated in code rather than pulled from a link, only price and delivery fee are editable now.
+
 ## Files
 - `index.html` — homepage and checkout UI
-- `admin.html` — password-protected page to edit prices, images, and delivery fee
+- `admin.html` — password-protected page to edit prices and delivery fee
 - `styles.css` — full design
 - `app.js` — product data, cart, and checkout logic
 - `admin.js` — admin login and settings form logic
 - `functions/api/order.js` — receives orders, sends them to Discord and/or WhatsApp
 - `functions/api/admin-login.js` — checks the admin password, issues a session token
-- `functions/api/products.js` — stores and returns prices, images, and delivery fee
+- `functions/api/products.js` — stores and returns prices and delivery fee
 
 Everything under `functions/` is a Cloudflare Pages Function. A file at `functions/api/order.js` automatically becomes the endpoint `/api/order`, no extra routing config needed.
 
@@ -32,7 +34,7 @@ Delete the old `netlify` folder and `netlify.toml` from your repo if they're sti
 
 Cloudflare builds and deploys the site. You'll get a URL like `cool-manufacturer.pages.dev`. The `/api/*` functions deploy automatically along with it, no separate step.
 
-### 3. Create the KV namespace (for prices, images, delivery fee)
+### 3. Create the KV namespace (for prices and delivery fee)
 1. In the Cloudflare dashboard, go to **Storage & Databases → KV**.
 2. Click **Create a namespace**.
 3. Name it something like `cool-manufacturer-settings`. Create it.

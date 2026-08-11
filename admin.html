@@ -7,18 +7,16 @@
   <title>Store Admin | Cool Manufacturer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
   <div class="page">
     <header class="topbar">
       <div>
-        <div class="eyebrow">Cool Manufacturer</div>
+        <span class="eyebrow">Cool Manufacturer</span>
         <h1 class="admin-title">Store admin</h1>
-        <p>Update product images, prices, and your delivery fee. Changes go live for every visitor right away.</p>
+        <p>Update prices and your delivery fee. Changes go live for every visitor right away.</p>
       </div>
       <div class="topbar-actions">
         <a href="index.html" class="btn btn-secondary">Back to site</a>
@@ -27,10 +25,10 @@
 
     <section class="section" id="loginPanel">
       <span class="eyebrow">Login</span>
-      <h3>Enter admin password</h3>
+      <h3 style="margin-top:10px">Enter admin password</h3>
       <form id="loginForm" class="admin-login-form">
         <label>Password<input name="password" type="password" required autocomplete="current-password" /></label>
-        <button class="btn btn-primary" type="submit">Log in</button>
+        <button class="btn btn-primary" type="submit" style="margin-top:16px">Log in</button>
         <p class="note" id="loginNote" role="status"></p>
       </form>
     </section>
@@ -38,8 +36,8 @@
     <section class="section" id="editPanel" hidden>
       <div class="section-head">
         <div>
-          <span class="eyebrow">Store settings</span>
-          <h3>Edit products & delivery</h3>
+          <span class="eyebrow" style="background:var(--purple);color:var(--white)">Store settings</span>
+          <h3>Edit prices & delivery</h3>
         </div>
         <button class="btn btn-secondary" id="logoutBtn" type="button">Log out</button>
       </div>
@@ -47,26 +45,17 @@
       <form id="settingsForm" class="admin-form">
         <div class="admin-product" data-product="milk-cool-pack">
           <h4>Milk Cool Pack</h4>
-          <div class="grid-2">
-            <label>Price (TT$)<input type="number" min="0.01" step="0.01" name="price" required /></label>
-            <label>Image URL<input type="url" name="image" required /></label>
-          </div>
+          <label>Price (TT$)<input type="number" min="0.01" step="0.01" name="price" required /></label>
         </div>
 
         <div class="admin-product" data-product="plain-cool-pack">
           <h4>Plain Cool Pack</h4>
-          <div class="grid-2">
-            <label>Price (TT$)<input type="number" min="0.01" step="0.01" name="price" required /></label>
-            <label>Image URL<input type="url" name="image" required /></label>
-          </div>
+          <label>Price (TT$)<input type="number" min="0.01" step="0.01" name="price" required /></label>
         </div>
 
         <div class="admin-product" data-product="long-cool-pack">
           <h4>Long Cool Pack</h4>
-          <div class="grid-2">
-            <label>Price (TT$)<input type="number" min="0.01" step="0.01" name="price" required /></label>
-            <label>Image URL<input type="url" name="image" required /></label>
-          </div>
+          <label>Price (TT$)<input type="number" min="0.01" step="0.01" name="price" required /></label>
         </div>
 
         <div class="admin-product">

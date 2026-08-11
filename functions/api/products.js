@@ -1,18 +1,9 @@
 const DEFAULTS = {
   deliveryFee: 0,
   products: {
-    'milk-cool-pack': {
-      price: 12,
-      image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80',
-    },
-    'plain-cool-pack': {
-      price: 10,
-      image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80',
-    },
-    'long-cool-pack': {
-      price: 40,
-      image: 'https://images.unsplash.com/photo-1497534446932-c925b458314e?auto=format&fit=crop&w=1200&q=80',
-    },
+    'milk-cool-pack': { price: 12 },
+    'plain-cool-pack': { price: 10 },
+    'long-cool-pack': { price: 40 },
   },
 };
 
@@ -87,7 +78,6 @@ export async function onRequestPost({ request, env }) {
     const price = Number(incoming.price);
     nextProducts[id] = {
       price: Number.isFinite(price) && price > 0 ? price : existing.price,
-      image: typeof incoming.image === 'string' && incoming.image.trim() ? incoming.image.trim() : existing.image,
     };
   }
 
