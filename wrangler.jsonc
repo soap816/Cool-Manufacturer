@@ -5,5 +5,8 @@
   "assets": {
     "directory": "./",
     "binding": "ASSETS"
-  }
+  },
+  "kv_namespaces": [
+    { "binding": "SITE_SETTINGS", "id": "e08dc2b3e3eb4c84ae75accb998653da" }
+  ]
 }
