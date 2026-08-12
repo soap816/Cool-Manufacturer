@@ -49,6 +49,7 @@ const products = [
 
 // Default delivery fee. Gets overridden by whatever is saved in the admin panel, if anything.
 let DELIVERY_FEE = 0;
+let MIN_DELIVERY_AMOUNT = 0;
 
 const CART_STORAGE_KEY = 'coolmanufacturer_cart_v1';
 
@@ -86,6 +87,8 @@ const els = {
   form: document.getElementById('orderForm'),
   formNote: document.getElementById('formNote'),
   submitBtn: document.getElementById('orderSubmitBtn'),
+  deliverySelect: document.getElementById('deliverySelect'),
+  deliveryHint: document.getElementById('deliveryHint'),
   cartFloat: document.getElementById('cartFloat'),
   cartFloatCount: document.getElementById('cartFloatCount'),
   cartFloatTotal: document.getElementById('cartFloatTotal'),
@@ -197,6 +200,23 @@ function renderProducts() {
   });
 }
 
+function updateDeliveryAvailability(subtotal) {
+  const deliveryOption = els.deliverySelect.querySelector('option[value="delivery"]');
+  const meetsMin = subtotal >= MIN_DELIVERY_AMOUNT;
+
+  if (MIN_DELIVERY_AMOUNT > 0 && !meetsMin) {
+    deliveryOption.disabled = true;
+    const remaining = MIN_DELIVERY_AMOUNT - subtotal;
+    els.deliveryHint.textContent = `Delivery is available on orders of ${currency(MIN_DELIVERY_AMOUNT)} or more. Add ${currency(remaining)} more, or choose pickup.`;
+    if (els.deliverySelect.value === 'delivery') {
+      els.deliverySelect.value = 'pickup';
+    }
+  } else {
+    deliveryOption.disabled = false;
+    els.deliveryHint.textContent = '';
+  }
+}
+
 function renderCart() {
   els.cartItems.innerHTML = state.cart.length
     ? state.cart.map((item) => `
@@ -224,6 +244,8 @@ function renderCart() {
   els.deliveryFee.textContent = currency(DELIVERY_FEE);
   els.grandTotal.textContent = currency(grandTotal);
 
+  updateDeliveryAvailability(subtotal);
+
   const totalItems = state.cart.reduce((sum, item) => sum + item.qty, 0);
   if (totalItems > 0) {
     els.cartFloat.classList.add('visible');
@@ -245,6 +267,12 @@ els.form.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!state.cart.length) {
     els.formNote.textContent = 'Please add at least one product to the cart first.';
+    return;
+  }
+
+  const subtotalCheck = state.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  if (els.deliverySelect.value === 'delivery' && MIN_DELIVERY_AMOUNT > 0 && subtotalCheck < MIN_DELIVERY_AMOUNT) {
+    els.formNote.textContent = `Delivery requires a minimum order of ${currency(MIN_DELIVERY_AMOUNT)}. Please choose pickup or add more to your cart.`;
     return;
   }
 
@@ -321,6 +349,10 @@ async function applyStoredSettings() {
 
     if (Number.isFinite(data.deliveryFee)) {
       DELIVERY_FEE = data.deliveryFee;
+    }
+
+    if (Number.isFinite(data.minDeliveryAmount)) {
+      MIN_DELIVERY_AMOUNT = data.minDeliveryAmount;
     }
   } catch {
     // No connection or the function isn't deployed yet. Stick with the defaults above.

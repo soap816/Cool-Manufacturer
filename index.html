@@ -77,12 +77,13 @@
             </select>
           </label>
           <label>Fulfillment
-            <select name="delivery">
+            <select name="delivery" id="deliverySelect">
               <option value="pickup">Pickup</option>
               <option value="delivery">Delivery</option>
             </select>
           </label>
         </div>
+        <p class="note" id="deliveryHint" role="status"></p>
         <input type="text" name="company" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button class="btn btn-primary full" type="submit" id="orderSubmitBtn">Send order</button>
         <p class="note" id="formNote" role="status">Orders go straight to your team.</p>

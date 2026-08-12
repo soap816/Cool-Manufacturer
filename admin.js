@@ -11,6 +11,7 @@ const els = {
   saveBtn: document.getElementById('saveBtn'),
   logoutBtn: document.getElementById('logoutBtn'),
   deliveryFeeInput: document.getElementById('deliveryFeeInput'),
+  minDeliveryAmountInput: document.getElementById('minDeliveryAmountInput'),
 };
 
 const getToken = () => sessionStorage.getItem(TOKEN_KEY);
@@ -41,6 +42,7 @@ function fillForm(data) {
     section.querySelector('input[name="price"]').value = product.price;
   });
   els.deliveryFeeInput.value = data.deliveryFee ?? 0;
+  els.minDeliveryAmountInput.value = data.minDeliveryAmount ?? 0;
 }
 
 async function init() {
@@ -113,6 +115,7 @@ els.settingsForm.addEventListener('submit', async (e) => {
 
   const payload = {
     deliveryFee: Number(els.deliveryFeeInput.value),
+    minDeliveryAmount: Number(els.minDeliveryAmountInput.value),
     products,
   };
 

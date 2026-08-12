@@ -63,6 +63,12 @@
           <label>Delivery fee (TT$)<input type="number" min="0" step="0.01" id="deliveryFeeInput" required /></label>
         </div>
 
+        <div class="admin-product">
+          <h4>Minimum order for delivery</h4>
+          <label>Minimum order amount (TT$)<input type="number" min="0" step="0.01" id="minDeliveryAmountInput" required /></label>
+          <p class="note" style="margin-top:10px">Set to 0 to allow delivery on any order size. Customers below this amount will only see pickup as an option.</p>
+        </div>
+
         <button class="btn btn-primary full" type="submit" id="saveBtn">Save changes</button>
         <p class="note" id="saveNote" role="status"></p>
       </form>
