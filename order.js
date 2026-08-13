@@ -41,6 +41,10 @@ export async function onRequestPost({ request, env }) {
     }
   }
 
+  const safeSubtotal = Number(subtotal) || 0;
+  const safeDeliveryFee = delivery === 'delivery' ? (Number(deliveryFee) || 0) : 0;
+  const safeGrandTotal = safeSubtotal + safeDeliveryFee;
+
   const lines = items.map((item) => `- ${item.qty}x ${item.name} (${item.price} TT)`).join('\n');
   const messageBody = [
     'NEW ORDER',
@@ -56,9 +60,9 @@ export async function onRequestPost({ request, env }) {
     'Items:',
     lines,
     '',
-    `Subtotal: TT$${Number(subtotal || 0).toFixed(2)}`,
-    `Delivery Fee: TT$${Number(deliveryFee || 0).toFixed(2)}`,
-    `Grand Total: TT$${Number(grandTotal || 0).toFixed(2)}`,
+    `Subtotal: TT$${safeSubtotal.toFixed(2)}`,
+    `Delivery Fee: TT$${safeDeliveryFee.toFixed(2)}`,
+    `Grand Total: TT$${safeGrandTotal.toFixed(2)}`,
   ].join('\n');
 
   // Discord supports **bold** markdown, so give it a bold heading. WhatsApp gets the plain version.

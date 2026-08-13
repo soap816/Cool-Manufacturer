@@ -238,13 +238,14 @@ function renderCart() {
   els.cartItems.querySelectorAll('[data-plus]').forEach((btn) => btn.addEventListener('click', () => updateQty(btn.dataset.plus, 1)));
 
   const subtotal = state.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const grandTotal = subtotal + DELIVERY_FEE;
+  updateDeliveryAvailability(subtotal);
+
+  const deliveryFeeApplied = els.deliverySelect.value === 'delivery' ? DELIVERY_FEE : 0;
+  const grandTotal = subtotal + deliveryFeeApplied;
 
   els.subtotal.textContent = currency(subtotal);
-  els.deliveryFee.textContent = currency(DELIVERY_FEE);
+  els.deliveryFee.textContent = currency(deliveryFeeApplied);
   els.grandTotal.textContent = currency(grandTotal);
-
-  updateDeliveryAvailability(subtotal);
 
   const totalItems = state.cart.reduce((sum, item) => sum + item.qty, 0);
   if (totalItems > 0) {
@@ -262,6 +263,8 @@ els.search.addEventListener('input', (e) => {
   state.search = e.target.value;
   renderProducts();
 });
+
+els.deliverySelect.addEventListener('change', renderCart);
 
 els.form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -286,6 +289,9 @@ els.form.addEventListener('submit', async (e) => {
     return;
   }
 
+  const submittedSubtotal = state.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const submittedDeliveryFee = formData.get('delivery') === 'delivery' ? DELIVERY_FEE : 0;
+
   const order = {
     customer: {
       name: formData.get('name'),
@@ -296,9 +302,9 @@ els.form.addEventListener('submit', async (e) => {
     delivery: formData.get('delivery'),
     company: formData.get('company'),
     items: state.cart,
-    subtotal: state.cart.reduce((sum, item) => sum + item.price * item.qty, 0),
-    deliveryFee: DELIVERY_FEE,
-    grandTotal: state.cart.reduce((sum, item) => sum + item.price * item.qty, 0) + DELIVERY_FEE,
+    subtotal: submittedSubtotal,
+    deliveryFee: submittedDeliveryFee,
+    grandTotal: submittedSubtotal + submittedDeliveryFee,
     createdAt: new Date().toISOString(),
     source: 'Cool Manufacturer Website',
   };
