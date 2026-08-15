@@ -19,7 +19,7 @@ export async function onRequestPost({ request, env }) {
     return new Response(JSON.stringify({ error: 'Invalid request' }), { status: 400, headers });
   }
 
-  const { customer, items, payment, delivery, subtotal, deliveryFee, grandTotal, createdAt, source, company } = body;
+  const { customer, items, payment, delivery, subtotal, deliveryFee, grandTotal, createdAt, source, company, locationLink } = body;
 
   // Honeypot: real customers never fill this hidden field. Accept quietly, skip notifications.
   if (company) {
@@ -45,8 +45,12 @@ export async function onRequestPost({ request, env }) {
   const safeDeliveryFee = delivery === 'delivery' ? (Number(deliveryFee) || 0) : 0;
   const safeGrandTotal = safeSubtotal + safeDeliveryFee;
 
+  // Only trust it if it's genuinely a Google Maps coordinate link, since this comes from the client.
+  const locationLinkPattern = /^https:\/\/www\.google\.com\/maps\?q=-?\d{1,3}(\.\d+)?,-?\d{1,3}(\.\d+)?$/;
+  const safeLocationLink = typeof locationLink === 'string' && locationLinkPattern.test(locationLink) ? locationLink : '';
+
   const lines = items.map((item) => `- ${item.qty}x ${item.name} (${item.price} TT)`).join('\n');
-  const messageBody = [
+  const messageLines = [
     'NEW ORDER',
     `Source: ${source || 'Website'}`,
     `Time: ${createdAt || new Date().toISOString()}`,
@@ -54,6 +58,13 @@ export async function onRequestPost({ request, env }) {
     `Customer: ${customer.name}`,
     `Phone: ${customer.phone}`,
     `Address: ${customer.address}`,
+  ];
+
+  if (safeLocationLink) {
+    messageLines.push(`Location pin: ${safeLocationLink}`);
+  }
+
+  messageLines.push(
     `Delivery: ${delivery}`,
     `Payment: ${payment}`,
     '',
@@ -63,10 +74,12 @@ export async function onRequestPost({ request, env }) {
     `Subtotal: TT$${safeSubtotal.toFixed(2)}`,
     `Delivery Fee: TT$${safeDeliveryFee.toFixed(2)}`,
     `Grand Total: TT$${safeGrandTotal.toFixed(2)}`,
-  ].join('\n');
+  );
 
-  // Discord supports **bold** markdown, so give it a bold heading. WhatsApp gets the plain version.
-  const discordMessage = messageBody.replace('NEW ORDER', '**NEW ORDER**');
+  const messageBody = messageLines.join('\n');
+
+  // Discord supports **bold** markdown and @everyone pings. WhatsApp gets the plain version, no ping syntax.
+  const discordMessage = `@everyone ${messageBody.replace('NEW ORDER', '**NEW ORDER**')}`;
 
   let discordSent = false;
   let whatsappSent = false;

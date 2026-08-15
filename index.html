@@ -69,6 +69,8 @@
           <label>Phone<input name="phone" type="tel" required placeholder="868 xxx xxxx" autocomplete="tel" pattern="[0-9+\-\s\(\)]{7,15}" title="Enter a valid phone number" /></label>
         </div>
         <label>Address / pickup notes<textarea name="address" required placeholder="Enter address or pickup instructions" autocomplete="street-address"></textarea></label>
+        <button type="button" class="btn btn-secondary" id="shareLocationBtn" style="margin-top:10px">Share my exact location (optional)</button>
+        <p class="note" id="locationStatus" role="status"></p>
         <div class="grid-2">
           <label>Payment method
             <select name="payment">

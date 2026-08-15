@@ -89,6 +89,8 @@ const els = {
   submitBtn: document.getElementById('orderSubmitBtn'),
   deliverySelect: document.getElementById('deliverySelect'),
   deliveryHint: document.getElementById('deliveryHint'),
+  shareLocationBtn: document.getElementById('shareLocationBtn'),
+  locationStatus: document.getElementById('locationStatus'),
   cartFloat: document.getElementById('cartFloat'),
   cartFloatCount: document.getElementById('cartFloatCount'),
   cartFloatTotal: document.getElementById('cartFloatTotal'),
@@ -259,6 +261,33 @@ function renderCart() {
   saveCart();
 }
 
+let capturedLocationLink = '';
+
+els.shareLocationBtn.addEventListener('click', () => {
+  if (!navigator.geolocation) {
+    els.locationStatus.textContent = 'Location sharing isn\u2019t supported on this device.';
+    return;
+  }
+
+  els.shareLocationBtn.disabled = true;
+  els.locationStatus.textContent = 'Getting your location...';
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      capturedLocationLink = `https://www.google.com/maps?q=${latitude.toFixed(6)},${longitude.toFixed(6)}`;
+      els.locationStatus.textContent = 'Location added. We\u2019ll use this to find you.';
+      els.shareLocationBtn.disabled = false;
+    },
+    () => {
+      capturedLocationLink = '';
+      els.locationStatus.textContent = 'Couldn\u2019t get your location. You can still describe it in the address field.';
+      els.shareLocationBtn.disabled = false;
+    },
+    { enableHighAccuracy: true, timeout: 10000 },
+  );
+});
+
 els.search.addEventListener('input', (e) => {
   state.search = e.target.value;
   renderProducts();
@@ -285,6 +314,8 @@ els.form.addEventListener('submit', async (e) => {
     els.form.reset();
     state.cart = [];
     renderCart();
+    capturedLocationLink = '';
+    els.locationStatus.textContent = '';
     els.formNote.textContent = 'Order sent successfully. We\u2019ll be in touch shortly.';
     return;
   }
@@ -305,6 +336,7 @@ els.form.addEventListener('submit', async (e) => {
     subtotal: submittedSubtotal,
     deliveryFee: submittedDeliveryFee,
     grandTotal: submittedSubtotal + submittedDeliveryFee,
+    locationLink: capturedLocationLink,
     createdAt: new Date().toISOString(),
     source: 'Cool Manufacturer Website',
   };
@@ -330,6 +362,8 @@ els.form.addEventListener('submit', async (e) => {
     state.cart = [];
     renderCart();
     els.form.reset();
+    capturedLocationLink = '';
+    els.locationStatus.textContent = '';
     els.formNote.textContent = 'Order sent successfully. We\u2019ll be in touch shortly to confirm.';
   } catch (err) {
     els.formNote.textContent = 'Something went wrong sending your order. Please try again or contact us directly.';
